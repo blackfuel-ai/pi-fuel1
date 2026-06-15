@@ -1,4 +1,4 @@
-import type { ExtensionAPI, AuthCredential } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { AuthStorage } from "@earendil-works/pi-coding-agent";
 
 interface OpenAIModel {
@@ -15,14 +15,10 @@ interface OpenAIModelsResponse {
 
 export default async function (pi: ExtensionAPI): Promise<void> {
 	const auth = AuthStorage.create();
-	const credential = auth.get("fuel1") as AuthCredential | undefined;
-	const apiKey =
-		credential?.type === "api_key"
-			? credential.key
-			: process.env.FUEL1_API_KEY;
+	const apiKey = (await auth.getApiKey("fuel1")) ?? process.env.FUEL1_API_KEY;
 	if (!apiKey) {
 		console.warn(
-			"[fuel1-provider] No API key found in ~/.pi/agent/auth.json (key: fuel1) or FUEL1_API_KEY environment variable. Provider will not be registered.",
+			"[fuel1-provider] No API key found. Run /login, choose \"Use an API key\", and select Fuel1 — or set FUEL1_API_KEY.",
 		);
 		return;
 	}
