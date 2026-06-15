@@ -5,7 +5,7 @@ A [pi](https://pi.dev) extension that dynamically registers all [Fuel1.ai](https
 ## Installation
 
 ```bash
-pi install git:github.com/blackfuel-ai/fuel1-pi-provider
+pi install git:github.com/blackfuel-ai/pi-fuel1
 ```
 
 ## Setup
