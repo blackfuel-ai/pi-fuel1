@@ -12,17 +12,24 @@ The extension auto-discovers on next pi startup — no `/reload` needed.
 
 ## Setup
 
-Get an API key at [console.fuel1.ai](https://console.fuel1.ai), then in pi run `/login`, choose
-**Use an API key**, and select **Fuel1**. Paste your key when prompted — pi stores
-it in `~/.pi/agent/auth.json`.
+Get an API key at [console.fuel1.ai](https://console.fuel1.ai).
 
-Alternatively, set the `FUEL1_API_KEY` environment variable:
+**Recommended — log in from inside pi:**
+
+1. Run `/login`
+2. Choose **Use an API key**
+3. Select **Fuel1**
+4. Paste your key when prompted
+
+pi stores the key in `~/.pi/agent/auth.json`, so you only do this once.
+
+### Alternative: environment variable
 
 ```bash
 export FUEL1_API_KEY=bf_your_key_here
 ```
 
-The extension reads the key stored via `/login` first, then falls back to the env var.
+The extension reads the key stored via `/login` first, then falls back to `FUEL1_API_KEY`.
 
 ## Usage
 
