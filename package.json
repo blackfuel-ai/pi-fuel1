@@ -1,0 +1,14 @@
+{
+  "name": "@blackfuel/fuel1-pi-provider",
+  "version": "1.0.0",
+  "description": "Pi extension that registers all Blackfuel (Fuel1.ai) models as a provider",
+  "keywords": ["pi-package", "blackfuel", "fuel1", "provider"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blackfuel-ai/fuel1-pi-provider.git"
+  },
+  "pi": {
+    "extensions": ["./extensions"]
+  }
+}
