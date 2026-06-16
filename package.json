@@ -4,11 +4,20 @@
   "description": "Pi extension that registers all Blackfuel (Fuel1.ai) models as a provider",
   "keywords": ["pi-package", "blackfuel", "fuel1", "provider"],
   "license": "MIT",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/blackfuel-ai/pi-fuel1.git"
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "pi": {
     "extensions": ["./extensions"]
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "0.79.4",
+    "@types/node": "22.10.2",
+    "typescript": "5.7.2"
   }
 }
