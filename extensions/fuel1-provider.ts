@@ -81,7 +81,12 @@ export default async function (pi: ExtensionAPI): Promise<void> {
 			);
 			const input: ("text" | "image")[] =
 				supportedInput.length > 0 ? supportedInput : ["text"];
-			const contextWindow = model.context_length ?? 128000;
+			// A non-positive context_length is treated as absent (0 would slip
+			// through `?? ` and register a model with a zero token budget).
+			const contextWindow =
+				model.context_length && model.context_length > 0
+					? model.context_length
+					: 128000;
 			return {
 				id: model.id,
 				name: model.name ?? model.id,
