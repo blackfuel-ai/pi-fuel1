@@ -6,6 +6,10 @@ interface OpenAIModel {
 	object: string;
 	created: number;
 	owned_by: string;
+	name?: string;
+	context_length?: number;
+	supported_parameters?: string[];
+	input_modalities?: string[];
 }
 
 interface OpenAIModelsResponse {
@@ -23,7 +27,7 @@ export default async function (pi: ExtensionAPI): Promise<void> {
 		return;
 	}
 
-	let models: { id: string }[];
+	let models: OpenAIModel[];
 
 	try {
 		const response = await fetch("https://api.fuel1.ai/v1/models", {
@@ -49,7 +53,7 @@ export default async function (pi: ExtensionAPI): Promise<void> {
 			return;
 		}
 
-		models = payload.data.map((m) => ({ id: m.id }));
+		models = payload.data;
 	} catch (error) {
 		console.warn(
 			`[fuel1-provider] Failed to reach Fuel1.ai API: ${error instanceof Error ? error.message : String(error)}. Provider will not be registered.`,
@@ -67,14 +71,31 @@ export default async function (pi: ExtensionAPI): Promise<void> {
 		baseUrl: "https://api.fuel1.ai/v1",
 		apiKey: "$FUEL1_API_KEY",
 		api: "openai-completions",
-		models: models.map((model) => ({
-			id: model.id,
-			name: model.id,
-			reasoning: false,
-			input: ["text"] as ("text" | "image")[],
-			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-			contextWindow: 128000,
-			maxTokens: 16384,
-		})),
+		models: models.map((model) => {
+			const supported = model.supported_parameters ?? [];
+			const modalities = model.input_modalities ?? ["text"];
+			// Pi's provider model config only represents "text" and "image" inputs;
+			// any other modality reported by the API (e.g. "video") has no Pi equivalent.
+			const supportedInput = (["text", "image"] as const).filter((m) =>
+				modalities.includes(m),
+			);
+			const input: ("text" | "image")[] =
+				supportedInput.length > 0 ? supportedInput : ["text"];
+			// A non-positive context_length is treated as absent (0 would slip
+			// through `?? ` and register a model with a zero token budget).
+			const contextWindow =
+				model.context_length && model.context_length > 0
+					? model.context_length
+					: 128000;
+			return {
+				id: model.id,
+				name: model.name ?? model.id,
+				reasoning: supported.includes("reasoning"),
+				input,
+				cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+				contextWindow,
+				maxTokens: Math.min(16384, contextWindow),
+			};
+		}),
 	});
 }
